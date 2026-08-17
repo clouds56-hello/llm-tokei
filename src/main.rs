@@ -37,7 +37,7 @@ use crate::format::{
 use crate::model::{ParsedUsageFile, UsageRecord};
 use crate::pricing::{update_cached_prices, PricingTable};
 use crate::sources::{
-  claude::ClaudeSource, codex::CodexSource, copilot::CopilotSource, copilot_cli::CopilotCliSource,
+  claude::ClaudeSource, codex::CodexSource, copilot::CopilotSource, copilot_cli::CopilotCliSource, dsh::DshSource,
   opencode::OpenCodeSource, pi_agent::PiAgentSource, UsageSource,
 };
 use crate::tips::tip_for_hour;
@@ -93,6 +93,7 @@ fn main() -> Result<()> {
         "copilot".into(),
         "copilot-cli".into(),
         "pi-agent".into(),
+        "dsh".into(),
       ]
     });
 
@@ -222,6 +223,35 @@ fn main() -> Result<()> {
           all.append(&mut v);
         }
         Err(e) if args.verbose => eprintln!("pi-agent: error: {e:#}"),
+        Err(_) => {}
+      }
+    }
+  }
+
+  if want.iter().any(|s| s == "dsh") {
+    let path = args.dsh_dir.clone().or_else(DshSource::default_path);
+    if let Some(path) = path {
+      let source = DshSource::new(path);
+      let progress = ProcessingProgress::new(args.format, args.verbose);
+      let result = if let Some(cache) = cache.as_mut() {
+        collect_one_record_source_with_cache(
+          cache,
+          "dsh",
+          source.discover_files(),
+          DshSource::parse_cache_file,
+          progress,
+        )
+      } else {
+        collect_one_record_source_direct("dsh", source.discover_files(), DshSource::parse_file, progress)
+      };
+      match result {
+        Ok((mut records, stats)) => {
+          if args.verbose {
+            eprintln!("{}", format_cache_stats("dsh", "files", &stats));
+          }
+          all.append(&mut records);
+        }
+        Err(error) if args.verbose => eprintln!("dsh: error: {error:#}"),
         Err(_) => {}
       }
     }

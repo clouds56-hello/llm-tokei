@@ -263,7 +263,7 @@ pub struct Args {
   #[arg(long, help_heading = "Filters", global = true)]
   pub cwd: Option<String>,
 
-  /// Comma-separated source list: codex,opencode,claude,copilot,copilot-cli,pi-agent (default: all).
+  /// Comma-separated source list: codex,opencode,claude,copilot,copilot-cli,pi-agent,dsh (default: all).
   #[arg(long, value_delimiter = ',', help_heading = "Sources", global = true)]
   pub source: Option<Vec<String>>,
 
@@ -292,6 +292,10 @@ pub struct Args {
   /// Override Pi Agent sessions root (default: ~/.pi/agent/sessions).
   #[arg(long, help_heading = "Sources", global = true)]
   pub pi_agent_dir: Option<PathBuf>,
+
+  /// Override DeepSeek Harness sessions root (default: $DSH_HOME/sessions or ~/.dsh/sessions).
+  #[arg(long, help_heading = "Sources", global = true)]
+  pub dsh_dir: Option<PathBuf>,
 
   /// Override/extend pricing table (JSON file).
   #[arg(long, help_heading = "Pricing", global = true)]

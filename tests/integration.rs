@@ -1184,6 +1184,40 @@ fn pi_agent_fixture_parses_usage() {
 }
 
 #[test]
+fn dsh_fixture_parses_default_compressed_usage() {
+  let fixtures = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/dsh/compressed");
+  let (mut cmd, cache_home) = isolated_cmd("dsh");
+  let out = cmd
+    .args([
+      "--source",
+      "dsh",
+      "--dsh-dir",
+      fixtures.to_str().unwrap(),
+      "--format",
+      "json",
+      "--no-cache",
+    ])
+    .output()
+    .expect("run llm-tokei");
+  let _ = std::fs::remove_dir_all(cache_home);
+  assert!(out.status.success(), "stderr: {}", String::from_utf8_lossy(&out.stderr));
+  let value: serde_json::Value = serde_json::from_slice(&out.stdout).expect("valid json");
+  let rows = value.as_array().expect("JSON rows");
+  assert_eq!(rows.len(), 1);
+  let row = &rows[0];
+  assert_eq!(row["keys"]["source"], "dsh");
+  assert_eq!(row["keys"]["model"], "deepseek-v4-flash");
+  assert_eq!(row["input"], 170);
+  assert_eq!(row["output"], 35);
+  assert_eq!(row["reasoning"], 5);
+  assert_eq!(row["cache_read"], 30);
+  assert_eq!(row["total"], 205);
+  assert_eq!(row["calls"], 2);
+  assert_eq!(row["rounds"], 1);
+  assert_eq!(row["sessions"], 1);
+}
+
+#[test]
 fn codex_fixture_reports_response_item_bytes() {
   let fixtures = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/codex/sessions");
   let (mut cmd, cache_home) = isolated_cmd("codex-bytes");
