@@ -11,6 +11,7 @@ pub mod codex;
 pub mod copilot;
 pub mod copilot_cli;
 pub mod copilot_shutdown;
+pub mod dsh;
 pub mod dump;
 pub mod opencode;
 pub mod pi_agent;
@@ -51,7 +52,16 @@ where
   F: FnMut(T, JsonlPosition),
 {
   let file = File::open(path)?;
-  let mut reader = BufReader::new(file);
+  read_jsonl_reader_with_status(BufReader::new(file), &mut visit)
+}
+
+/// Read JSONL from an arbitrary buffered reader while retaining byte offsets.
+pub fn read_jsonl_reader_with_status<T, R, F>(mut reader: R, mut visit: F) -> Result<bool>
+where
+  T: DeserializeOwned,
+  R: BufRead,
+  F: FnMut(T, JsonlPosition),
+{
   let mut byte_offset = 0u64;
   let mut line_number = 0usize;
   let mut complete = true;

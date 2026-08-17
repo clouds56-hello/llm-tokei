@@ -311,7 +311,8 @@ for one run.
 
 Config keys mirror the main CLI flags using kebab-case names inside sections, for
 example `grouping.date-bucket`, `table.table-width`, `output.cost-per`,
-`sources.codex-dir`, `sources.copilot-cli-dir`, and `sources.pi-agent-dir`.
+`sources.codex-dir`, `sources.copilot-cli-dir`, `sources.pi-agent-dir`, and
+`sources.dsh-dir`.
 Subcommand-specific options are not read from config.
 
 ## Pricing
@@ -530,6 +531,32 @@ results, those calls appear as estimated `deepseek-v4-flash` Pi Agent rows:
 ```sh
 llm-tokei --source pi-agent --provider deepseek --group-by model
 ```
+
+### DeepSeek Harness
+
+Default root:
+
+```text
+$DSH_HOME/sessions or ~/.dsh/sessions
+```
+
+Override:
+
+```sh
+llm-tokei --source dsh --dsh-dir /path/to/sessions
+```
+
+DeepSeek Harness stores one session log below each project/session directory.
+The default `session.jsonl.zstd` encoding and diagnostic plaintext
+`session.jsonl` encoding are both supported.
+
+DSH emits an early usage chunk and then repeats the committed sample on the
+assistant message. `llm-tokei` follows DSH's own token-meter behavior: the last
+sample for a `(turn, step)` replaces the earlier sample, while a usage chunk
+without a committed assistant message remains countable. DSH reports uncached
+input separately from cache traffic. Its output count includes reasoning, so
+`llm-tokei` separates `reasoningTokens` from visible completion without adding
+it to the total twice.
 
 ## Cache
 

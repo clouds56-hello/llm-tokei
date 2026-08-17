@@ -23,7 +23,7 @@ llm-tokei --cost-per provider --cost official --month -h
 
 ## Why Use It
 
-- **One report across agents**: Codex CLI, OpenCode, Claude Code, GitHub Copilot Chat, GitHub Copilot CLI, and Pi Agent.
+- **One report across agents**: Codex CLI, OpenCode, Claude Code, GitHub Copilot Chat, GitHub Copilot CLI, Pi Agent, and DeepSeek Harness.
 - **Useful default table**: grouped by source and model, with cost columns included.
 - **Time windows that match how people ask**: `--24h`, `--7d`, `--1m`, `--today`, `--week`, `--month`.
 - **Activity at a glance**: hourly and daily plots for short windows, plus GitHub-style heatmaps for longer ones.
@@ -125,12 +125,17 @@ llm-tokei dump --copilot --out ./sessions-jsonl
 | GitHub Copilot Chat | VS Code, Insiders, VSCodium, and Cursor `workspaceStorage` roots |
 | GitHub Copilot CLI | `~/.copilot/session-state` |
 | Pi Agent | `~/.pi/agent/sessions` |
+| DeepSeek Harness (`dsh`) | `$DSH_HOME/sessions` or `~/.dsh/sessions` |
 
 Use `--source` and source path flags to narrow or override discovery.
 
 Pi Agent support includes exact assistant `usage` records and estimated
 `pi-web-access` `summary-review` tool results when the plugin stores the
 curated search payload and summary metadata.
+
+DeepSeek Harness support reads its default Zstandard-compressed session logs
+and diagnostic plaintext JSONL logs. Usage samples are deduplicated using
+DSH's last-sample-per-step semantics.
 
 ## Learn More
 

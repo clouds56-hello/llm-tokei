@@ -10,6 +10,7 @@ pub enum Source {
   Copilot,
   CopilotCli,
   PiAgent,
+  Dsh,
 }
 
 impl Source {
@@ -21,6 +22,7 @@ impl Source {
       Source::Copilot => "copilot",
       Source::CopilotCli => "copilot-cli",
       Source::PiAgent => "pi-agent",
+      Source::Dsh => "dsh",
     }
   }
 }
