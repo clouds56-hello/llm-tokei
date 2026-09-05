@@ -118,6 +118,15 @@
   "gpt-5.6-terra": {
     "vendor": "openai"
   },
+  "gpt-6-astra": {
+    "vendor": "openai",
+    "aliases": [
+      "openai/gpt-6-astra",
+      "openai/gpt-6-astra-fast",
+      "openai/gpt-6-astra-pro",
+      "openai-gpt-6-astra"
+    ]
+  },
   "gpt-image-2": {
     "vendor": "openai"
   },

@@ -151,17 +151,17 @@ jobs:
           verify_published() {
             package_name="$1"
             package_version="$2"
-            for attempt in {1..6}; do
+            for attempt in {1..12}; do
               if published_version=$(npm view "$package_name@$package_version" version --prefer-online 2>/dev/null) \
                 && [[ "$published_version" == "$package_version" ]]; then
                 echo "verified $package_name@$package_version"
                 return 0
               fi
-              if [[ "$attempt" -eq 6 ]]; then
+              if [[ "$attempt" -eq 12 ]]; then
                 echo "failed to verify $package_name@$package_version after $attempt attempts" >&2
                 return 1
               fi
-              echo "$package_name@$package_version is not visible yet; retrying in 10 seconds ($attempt/6)"
+              echo "$package_name@$package_version is not visible yet; retrying in 10 seconds ($attempt/12)"
               sleep 10
             done
           }

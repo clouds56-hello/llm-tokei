@@ -577,6 +577,29 @@ upsert,2025-08-01T00:00:00Z,cccccccccccccccccccccccccccccccccccccccc,3,test-prov
   }
 
   #[test]
+  fn bundled_gpt_6_prices_cover_provider_and_official_routes() {
+    let table = table();
+    let usage = usage_record(
+      Utc.with_ymd_and_hms(2026, 9, 5, 3, 0, 0).unwrap(),
+      "openrouter",
+      "openai/gpt-6-astra-pro",
+    );
+
+    assert_eq!(
+      table.canonical_model(usage.provider.as_deref(), usage.model.as_deref()),
+      "gpt-6-astra"
+    );
+    assert_eq!(
+      table.cost_breakdown_for(&usage, CostMode::Actual).unwrap().total(),
+      10.0
+    );
+    assert_eq!(
+      table.cost_breakdown_for(&usage, CostMode::Official).unwrap().total(),
+      10.0
+    );
+  }
+
+  #[test]
   fn zero_history_price_is_included_for_actual_and_mixed_costs() {
     let history = HistoricalPrices::from_csv(
       b"op,ts,commit_sha,sequence,provider,model,input,output,reasoning,cache_read,cache_write,input_audio,output_audio\n\
@@ -782,9 +805,9 @@ upsert,2025-03-01T00:00:00Z,bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb,2,openai,gp
     assert_eq!(t.canonical_model(None, Some("gpt-5.6")), "gpt-5.6-sol");
 
     let cases = [
-      ("gpt-5.6-sol", 5.0, 30.0, 0.5, 6.25),
-      ("gpt-5.6-terra", 2.5, 15.0, 0.25, 3.125),
-      ("gpt-5.6-luna", 1.0, 6.0, 0.1, 1.25),
+      ("gpt-5.6-sol", 4.0, 20.0, 0.4, 5.0),
+      ("gpt-5.6-terra", 2.0, 12.0, 0.2, 2.5),
+      ("gpt-5.6-luna", 0.2, 1.2, 0.02, 0.25),
     ];
     for (model, input, output, cache_read, cache_write) in cases {
       let price = t

@@ -5,7 +5,7 @@ import { getModel, listModels, listModelsDevSources, resolveModel } from "../dis
 
 test("loads the complete vendor-split catalog", () => {
   const models = listModels();
-  assert.equal(models.length, 247);
+  assert.equal(models.length, 248);
   assert.deepEqual([...new Set(models.map((model) => model.vendor))].sort(), [
     "alibaba",
     "anthropic",
@@ -46,7 +46,8 @@ test("resolves current official models.dev aliases exactly", () => {
     ["claude-opus-4-5-20251101", "claude-opus-4.5"],
     ["gemini-3.1-pro-preview", "gemini-3.1-pro"],
     ["gpt-4o-2024-08-06", "gpt-4o"],
-    ["gpt-5.3-chat-latest", "gpt-5.3-chat"]
+    ["gpt-5.3-chat-latest", "gpt-5.3-chat"],
+    ["openai/gpt-6-astra-pro", "gpt-6-astra"]
   ]) {
     const resolution = resolveModel({ model });
     assert.equal(resolution.canonical_name, canonicalName);
